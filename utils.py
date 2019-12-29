@@ -63,3 +63,31 @@ def uniqueName(name):
         name = "%s%s" % (baseName, str(idcounter + 1))
         idcounter = idcounter + 1
     return name
+
+def createUpGrp(node, suffix, mi=True):
+    """
+    Creates an Upper Group for the given object.
+    Args:
+        node: (Pymel Object) Source Object
+        suffix: (String) Suffix for the group. String.
+        mi: (Boolean) Stands for "makeIdentity" If True, freezes the transformations of the new group. Default is True
+
+    Returns: The created group node
+
+    """
+    grpName = "%s_%s" % (node, suffix)
+    newGrp = cmds.group(em=True, name=grpName)
+
+    #align the new created empty group to the selected object
+
+    alignTo(newGrp, node, translation=True, rotation=True)
+
+    #check if the target object has a parent
+    originalParent = cmds.listRelatives(node, p=True)
+    if originalParent:
+        cmds.parent(newGrp, originalParent[0], r=False)
+        if mi:
+            cmds.makeIdentity(newGrp, a=True)
+
+    cmds.parent(node,newGrp)
+    return newGrp
