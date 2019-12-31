@@ -89,7 +89,14 @@ def getDistance(node1, node2):
 
 def getAllVerts(node, output="generator"):
     """
-    Using Maya Python API 1.0
+    gets all point positions on given mesh
+    :param node: (String) name of the mesh object
+    :param output: (String) return type. Values are: "generator", "list", "MPointArray"
+                    Default value is "generator"
+    :return:
+                    "generator" : returns a generator object
+                    "list" : returns list array of each point
+                    "MPointArray" : returns MPointArray object
     """
     # ___________Query vertex position ___________
 
