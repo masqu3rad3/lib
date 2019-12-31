@@ -17,6 +17,10 @@ for i in range(count):
     weights[i] = p.elementByPhysicalIndex(i).asFloat()
     # weights[i] = p.elementByPhysicalIndex(i).asDouble()
 
+# inject here somewhere to gather the getAllVerts with MPointArray return
+# if arrays are a match you can go from there and create proximity functions or ray casts
+
+
 # write
 for i in range(count):
     p.elementByLogicalIndex(ids[i]).setFloat(weights[i])
