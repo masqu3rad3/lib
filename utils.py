@@ -4,6 +4,13 @@ import maya.cmds as cmds
 import maya.OpenMaya as om
 # import maya.api.OpenMaya as om2
 
+__author__ = "Arda Kutlu"
+__copyright__ = "Copyright 2019, Library Utility Functions"
+__credits__ = []
+__license__ = "GPL"
+__maintainer__ = "Arda Kutlu"
+__email__ = "ardakutlu@gmail.com"
+__status__ = "Development"
 
 def getMDagPath(node):
     selList = om.MSelectionList()
@@ -356,68 +363,66 @@ def attrPass (sourceNode, targetNode, attributes=[], inConnections=True, outConn
     Returns: None
 
     """
+    # TODO : TEST and OPTIMIZE entire method
 
     # get the user defined attributes:
     if len(attributes)==0:
-        userAttr = pm.listAttr(sourceNode, ud=True)
+        userAttr = cmds.listAttr(sourceNode, ud=True)
     else:
         userAttr = attributes
 
     for attr in userAttr:
-
-
-
         flagBuildList=[]
-        atType = pm.getAttr("%s.%s" % (sourceNode,attr), type=True)
+        atType = cmds.getAttr("%s.%s" % (sourceNode,attr), type=True)
         atTypeFlag = "at='%s'" % (str(atType))
         flagBuildList.append(atTypeFlag)
 
-        if pm.attributeQuery(attr, node=sourceNode, enum=True)==True:
-            enumList=pm.attributeQuery(attr, node=sourceNode, listEnum=True)
-            enumListFlag="en='%s'" % str(enumList[0])
+        if cmds.attributeQuery(attr, node=sourceNode, enum=True)==True:
+            enumList = cmds.attributeQuery(attr, node=sourceNode, listEnum=True)
+            enumListFlag = "en='%s'" % str(enumList[0])
             flagBuildList.append(enumListFlag)
 
-        hiddenState = pm.attributeQuery(attr, node=sourceNode, hidden=True)
+        hiddenState = cmds.attributeQuery(attr, node=sourceNode, hidden=True)
         hiddenStateFlag = "h=%s" % (str(hiddenState))
         flagBuildList.append(hiddenStateFlag)
 
-        keyableState = pm.attributeQuery(attr, node=sourceNode, keyable=True)
+        keyableState = cmds.attributeQuery(attr, node=sourceNode, keyable=True)
         keyableStateFlag = "k=%s" % (str(keyableState))
         flagBuildList.append(keyableStateFlag)
 
-        longName = pm.attributeQuery(attr, node=sourceNode, longName=True)
+        longName = cmds.attributeQuery(attr, node=sourceNode, longName=True)
         longNameFlag = "ln='%s'" % str(longName)
         flagBuildList.append(longNameFlag)
 
-        if pm.attributeQuery(attr, node=sourceNode, maxExists=True) == True:
-            hardMax=pm.attributeQuery(attr, node=sourceNode, maximum =True)
+        if cmds.attributeQuery(attr, node=sourceNode, maxExists=True) == True:
+            hardMax = cmds.attributeQuery(attr, node=sourceNode, maximum =True)
             hardMaxFlag = "max=%s" % (str(hardMax[0]))
             flagBuildList.append(hardMaxFlag)
 
-        if pm.attributeQuery(attr, node=sourceNode, minExists=True) == True:
-            hardMin = pm.attributeQuery(attr, node=sourceNode, minimum=True)
+        if cmds.attributeQuery(attr, node=sourceNode, minExists=True) == True:
+            hardMin = cmds.attributeQuery(attr, node=sourceNode, minimum=True)
             hardMinFlag = "min=%s" % (str(hardMin[0]))
             flagBuildList.append(hardMinFlag)
 
-        readState = pm.attributeQuery(attr, node=sourceNode, readable=True)
+        readState = cmds.attributeQuery(attr, node=sourceNode, readable=True)
         readStateFlag = "r=%s" % (readState)
         flagBuildList.append(readStateFlag)
 
-        shortName = pm.attributeQuery(attr, node=sourceNode, shortName=True)
+        shortName = cmds.attributeQuery(attr, node=sourceNode, shortName=True)
         shortNameFlag = "sn='%s'" % str(shortName)
         flagBuildList.append(shortNameFlag)
 
         if pm.attributeQuery(attr, node=sourceNode, softMaxExists=True) == True:
-            softMax=pm.attributeQuery(attr, node=sourceNode, softMax =True)
+            softMax = cmds.attributeQuery(attr, node=sourceNode, softMax =True)
             softMaxFlag = "smx=%s" % (str(softMax[0]))
             flagBuildList.append(softMaxFlag)
 
-        if pm.attributeQuery(attr, node=sourceNode, softMinExists=True) == True:
-            softMin=pm.attributeQuery(attr, node=sourceNode, softMin =True)
+        if cmds.attributeQuery(attr, node=sourceNode, softMinExists=True) == True:
+            softMin = cmds.attributeQuery(attr, node=sourceNode, softMin =True)
             softMinFlag = "smn=%s" % (str(softMin[0]))
             flagBuildList.append(softMinFlag)
 
-        writeState = pm.attributeQuery(attr, node=sourceNode, writable=True)
+        writeState = cmds.attributeQuery(attr, node=sourceNode, writable=True)
         writeStateFlag = "w=%s" % (writeState)
         flagBuildList.append(writeStateFlag)
 
@@ -435,9 +440,9 @@ def attrPass (sourceNode, targetNode, attributes=[], inConnections=True, outConn
 
 
         # if an attribute with the same name exists
-        if pm.attributeQuery(attr, node=targetNode, exists=True):
+        if cmds.attributeQuery(attr, node=targetNode, exists=True):
             if overrideEx:
-                pm.deleteAttr("%s.%s" % (targetNode, attr))
+                cmds.deleteAttr("%s.%s" % (targetNode, attr))
                 exec (addAttribute)
             else:
                 continue
@@ -450,13 +455,13 @@ def attrPass (sourceNode, targetNode, attributes=[], inConnections=True, outConn
         for i in range (0, len(userAttr)):
             if values==True:
                 # get value
-                value=pm.getAttr(pm.PyNode("%s.%s" % (sourceNode, userAttr[i])))
+                value = cmds.getAttr("%s.%s" % (sourceNode, userAttr[i]))
                 # set Value
-                pm.setAttr(pm.PyNode("%s.%s" % (targetNode, userAttr[i])), value)
-            pm.PyNode("%s.%s" % (targetNode, userAttr[i])) >> pm.PyNode("%s.%s" % (sourceNode, userAttr[i]))
+                cmds.setAttr("%s.%s" % (targetNode, userAttr[i]), value)
+            cmds.connectAttr("%s.%s" %(targetNode, userAttr[i]), "%s.%s" %(sourceNode, userAttr[i]))
+            # ("%s.%s" % (targetNode, userAttr[i])) >> pm.PyNode("%s.%s" % (sourceNode, userAttr[i]))
     else:
-
-        pm.copyAttr(sourceNode, targetNode, inConnections=inConnections, outConnections=outConnections, values=values, attribute=userAttr)
+        cmds.copyAttr(sourceNode, targetNode, inConnections=inConnections, outConnections=outConnections, values=values, attribute=userAttr)
         if keepSourceAttributes==False:
             for i in userAttr:
-                pm.deleteAttr("%s.%s" % (sourceNode,i))
+                cmds.deleteAttr("%s.%s" % (sourceNode,i))
